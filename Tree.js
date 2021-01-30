@@ -1,6 +1,6 @@
 class Tree {
     constructor() {
-         var options = {
+        var options = {
             isStatic: true
         };
         this.body = Bodies.rectangle(310, 55, 100, 100, options);
