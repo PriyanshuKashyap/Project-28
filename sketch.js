@@ -4,7 +4,7 @@ const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 const Constraint = Matter.Constraint;
-var tree, ground, stone, boy, elasticConstraint, mangoBodyPosition, stoneBodyPosition;
+var tree, ground, stone, boy, sling, mangoBodyPosition, stoneBodyPosition, launcherObject;
 
 function preload()
 {
@@ -38,15 +38,19 @@ function setup() {
 	mango10 = new Mango(660, 137);
 	mango11 = new Mango(685, 210);
 
-	var options = {
+	sling = new Slingshot(stone.body, {x: 70, y: 380});
+	launcherObject = new Launcher();
+
+	/*var options = {
 		bodyA: stone.body,
-		pointB: {x: 50, y: 600},
+		pointA: {x: 50, y: 400},
+		pointB: {x: 70, y: 380},
 		stiffness: 0.01,
 		length: 5
-	};
+	};*/
 
-	elasticConstraint = Constraint.create(options);
-	World.add(world, elasticConstraint);
+	//elasticConstraint = Constraint.create(options);
+	//World.add(world, elasticConstraint);
 	
 	console.log(boy);
 	Engine.run(engine);
@@ -61,6 +65,7 @@ function draw() {
   tree.display();
   //tree.img.width = 500;
   ground.display();
+  sling.display();
   stone.display();
   stone.img.width = 180;
   boy.width = 300;
@@ -90,32 +95,31 @@ function draw() {
   detectCollision(stone, mango10);
   detectCollision(stone, mango11);
    
-  line(elasticConstraint.bodyA.position.x, elasticConstraint.bodyA.position.y, elasticConstraint.pointB.x, elasticConstraint.pointB.y);
-  console.log();
+  
+  //console.log(sling.elasticConstraint.bodyA);
   drawSprites();
  
 }
 
-/*
-function mouseDragged() {
 
+function mouseDragged() {
+	Matter.Body.setPosition(stone.body, {x: mouseX, y: mouseY});
 }
 
 function mouseReleased() {
-
+	sling.fly();
+	Matter.Body.setStatic(stone.body, false);
+	
 }
- */
 
-function fly() {
-	elasticConstraint.bodyA = null;
-}
+
 
 function detectCollision(lstone, lmango) {
 	mangoBodyPosition = lmango.body.position;
 	stoneBodyPosition = lstone.body.position;
 
 	var distance = dist(stoneBodyPosition.x, stoneBodyPosition.y, mangoBodyPosition.x, mangoBodyPosition.y);
-	if (distance <= lmango.r + lstone.r) {
+	if (distance <= lstone.body.circleRadius + lmango.body.circleRadius) {
 		Matter.Body.setStatic(lmango.body, false);
 	}
 }
